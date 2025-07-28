@@ -4,9 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // For Vercel Postgres, use POSTGRES_PRISMA_URL if available
-  // url      = env("POSTGRES_PRISMA_URL")
+  // Use POSTGRES_PRISMA_URL for Vercel Postgres, DATABASE_URL for local dev
+  url      = env("POSTGRES_PRISMA_URL") 
 }
 
 // User model for authentication and authorization

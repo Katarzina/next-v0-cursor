@@ -22,9 +22,9 @@ git push origin main
 During deployment setup:
 
 1. **Add Storage** → Select **Postgres** → Create Database
-2. **Environment Variables** - Add these:
+   - Vercel will automatically add: `POSTGRES_URL`, `POSTGRES_PRISMA_URL`, etc.
+2. **Environment Variables** - Add only this one:
    - `NEXTAUTH_SECRET` → Click "Generate" (or use `openssl rand -base64 32`)
-   - `DATABASE_URL` → Set value to `{{POSTGRES_PRISMA_URL}}` (this links to Vercel's variable)
 3. Click **Deploy**
 
 ### 4. Initialize Database (after deployment)
