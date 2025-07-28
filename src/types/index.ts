@@ -56,4 +56,23 @@ export interface TourFormData {
   name: string;
   email: string;
   phone: string;
+}
+
+// Blog types
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  author: string;
+  authorAvatar: string;
+  date: Date;
+  readTime: string;
+  category: string;
+  tags: string[];
+  views: number;
+  createdAt: Date;
+  updatedAt: Date;
 } 

@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  name    String?
+  posts   Post[]
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean @default(false)
+  author    User?   @relation(fields: [authorId], references: [id])
+  authorId  Int?
+}
+
+// Property model for real estate listings
+model Property {
+  id          Int       @id @default(autoincrement())
+  title       String
+  location    String
+  price       String
+  area        String
+  image       String
+  bedrooms    Int
+  bathrooms   Int
+  rating      Float
+  featured    Boolean   @default(false)
+  amenities   String[]
+  description String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  inquiries   Inquiry[]
+  tours       Tour[]
+  favorites   Favorite[]
+}
+
+// Agent model for real estate agents
+model Agent {
+  id              Int       @id @default(autoincrement())
+  name            String
+  title           String
+  image           String
+  rating          Float
+  reviewCount     Int       @default(0)
+  soldProperties  Int       @default(0)
+  yearsExperience Int
+  languages       String[]
+  specialties     String[]
+  phone           String
+  email           String    @unique
+  bio             String    @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  inquiries       Inquiry[]
+  reviews         Review[]
+}
+
+// Inquiry model for property/agent inquiries
+model Inquiry {
+  id         String    @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  message    String    @db.Text
+  createdAt  DateTime  @default(now())
+  
+  // Relations
+  property   Property? @relation(fields: [propertyId], references: [id])
+  propertyId Int?
+  agent      Agent?    @relation(fields: [agentId], references: [id])
+  agentId    Int?
+}
+
+// Tour model for scheduled property tours
+model Tour {
+  id         String   @id @default(cuid())
+  name       String
+  email      String
+  phone      String
+  tourDate   DateTime
+  tourTime   String
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId Int
+}
+
+// Favorite model for user favorites (if you add auth later)
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String   // You can relate this to User model later
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId Int
+  
+  @@unique([userId, propertyId])
+}
+
+// Review model for agent reviews
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5 stars
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
+  
+  // Relations
+  agent     Agent    @relation(fields: [agentId], references: [id])
+  agentId   Int
+}

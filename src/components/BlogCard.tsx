@@ -7,19 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, ArrowRight } from "lucide-react";
 import { useLocale } from '@/contexts/LocaleContext';
-
-interface BlogPost {
-  id: number;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  date: string;
-  readTime: number;
-  category: string;
-  image: string;
-  tags: string[];
-}
+import { BlogPost } from '@/types';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -28,9 +16,9 @@ interface BlogCardProps {
 export default function BlogCard({ post }: BlogCardProps) {
   const { t } = useLocale();
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+  const formatDate = (date: Date) => {
+    const dateObj = new Date(date);
+    return dateObj.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
@@ -61,7 +49,7 @@ export default function BlogCard({ post }: BlogCardProps) {
           </div>
           <div className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            <span>{post.readTime} {t.blog.minRead}</span>
+            <span>{post.readTime}</span>
           </div>
         </div>
 
@@ -80,7 +68,7 @@ export default function BlogCard({ post }: BlogCardProps) {
           </div>
           
           <Link 
-            href={`/blog/${post.id}`}
+            href={`/blog/${post.slug}`}
             className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium group/link"
           >
             {t.blog.readMore}
