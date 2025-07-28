@@ -259,6 +259,7 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 📦 Build and Deploy
 
+### Local Production Build
 ```bash
 # Build for production
 npm run build
@@ -266,6 +267,66 @@ npm run build
 # Start production server
 npm start
 ```
+
+### Deploy to Vercel
+
+1. **Push your code to GitHub**
+```bash
+git add .
+git commit -m "Prepare for Vercel deployment"
+git push origin main
+```
+
+2. **Import to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "New Project"
+   - Import your GitHub repository
+   - Vercel will automatically detect Next.js
+
+3. **Configure Environment Variables in Vercel Dashboard**
+   
+   Required variables:
+   ```
+   DATABASE_URL=your-postgresql-connection-string
+   NEXTAUTH_URL=https://your-app.vercel.app
+   NEXTAUTH_SECRET=your-generated-secret
+   ```
+   
+   Optional variables:
+   ```
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   ```
+
+4. **Database Setup Options**
+   
+   **Option A: Vercel Postgres**
+   - Add Vercel Postgres from the Vercel dashboard
+   - It will automatically set DATABASE_URL
+   
+   **Option B: External Database (Recommended)**
+   - Use [Supabase](https://supabase.com) (free tier available)
+   - Use [Neon](https://neon.tech) (free tier available)
+   - Use [Railway](https://railway.app) (pay as you go)
+   
+5. **Run Database Migrations**
+   ```bash
+   # After deployment, run migrations using Vercel CLI
+   vercel env pull .env.local
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+
+6. **Update NEXTAUTH_URL**
+   - After deployment, update NEXTAUTH_URL to your Vercel domain
+   - Example: `https://your-app.vercel.app`
+
+### Important Deployment Notes
+
+- **Database**: You need a PostgreSQL database. Vercel doesn't include one by default
+- **Environment Variables**: All env variables must be set in Vercel dashboard
+- **Build Command**: Vercel will use `prisma generate && next build` automatically
+- **Node Version**: The project uses Node.js 18.x or higher
 
 ## 📊 API Documentation
 
