@@ -32,8 +32,16 @@ export default function AgentsClient({ initialAgents }: AgentsClientProps) {
   });
 
   // Get unique specialties and languages
-  const allSpecialties = [...new Set(initialAgents.flatMap(agent => agent.specialties))];
-  const allLanguages = [...new Set(initialAgents.flatMap(agent => agent.languages))];
+  const specialtiesSet = new Set<string>();
+  const languagesSet = new Set<string>();
+  
+  initialAgents.forEach(agent => {
+    agent.specialties.forEach(specialty => specialtiesSet.add(specialty));
+    agent.languages.forEach(language => languagesSet.add(language));
+  });
+  
+  const allSpecialties = Array.from(specialtiesSet);
+  const allLanguages = Array.from(languagesSet);
 
   // Filter agents
   const filteredAgents = initialAgents.filter(agent => {

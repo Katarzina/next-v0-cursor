@@ -47,7 +47,6 @@ import {
 } from 'lucide-react';
 import { Property } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { formatCurrency } from '@/lib/utils';
 
 interface AgentPropertiesClientProps {
   initialProperties: Property[];

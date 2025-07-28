@@ -1,19 +1,27 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
-import SwaggerUI from 'swagger-ui-react'
 import 'swagger-ui-react/swagger-ui.css'
+
+// Dynamic import to avoid SSR issues
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { 
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center min-h-screen">Loading API documentation...</div>
+})
 
 export default function ApiDocsPage() {
   const [spec, setSpec] = useState(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     fetch('/api/swagger')
       .then(res => res.json())
       .then(data => setSpec(data))
   }, [])
 
-  if (!spec) {
+  if (!mounted || !spec) {
     return <div className="flex items-center justify-center min-h-screen">Loading API documentation...</div>
   }
 

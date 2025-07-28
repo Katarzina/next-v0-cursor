@@ -21,8 +21,16 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
   const [selectedTag, setSelectedTag] = useState('all');
 
   // Get unique categories and tags
-  const categories = ['all', ...new Set(initialPosts.map(post => post.category))];
-  const allTags = ['all', ...new Set(initialPosts.flatMap(post => post.tags))];
+  const categoriesSet = new Set<string>();
+  const tagsSet = new Set<string>();
+  
+  initialPosts.forEach(post => {
+    categoriesSet.add(post.category);
+    post.tags.forEach(tag => tagsSet.add(tag));
+  });
+  
+  const categories = ['all', ...Array.from(categoriesSet)];
+  const allTags = ['all', ...Array.from(tagsSet)];
 
   // Filter posts
   const filteredPosts = initialPosts.filter(post => {

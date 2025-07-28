@@ -30,20 +30,32 @@ import { Property } from '@/types';
 import { Loader2, Plus, X } from 'lucide-react';
 import Image from 'next/image';
 
+// Define the form data type explicitly
+interface PropertyFormData {
+  title: string;
+  location: string;
+  price: string;
+  area: string;
+  bedrooms: number;
+  bathrooms: number;
+  description: string;
+  featured: boolean;
+  amenities: string[];
+  image: string;
+}
+
 const propertySchema = z.object({
   title: z.string().min(1, 'Title is required'),
   location: z.string().min(1, 'Location is required'),
   price: z.string().min(1, 'Price is required'),
   area: z.string().min(1, 'Area is required'),
-  bedrooms: z.coerce.number().min(0, 'Bedrooms must be 0 or more'),
-  bathrooms: z.coerce.number().min(0, 'Bathrooms must be 0 or more'),
+  bedrooms: z.number().min(0, 'Bedrooms must be 0 or more'),
+  bathrooms: z.number().min(0, 'Bathrooms must be 0 or more'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  featured: z.boolean().default(false),
-  amenities: z.array(z.string()).default([]),
+  featured: z.boolean(),
+  amenities: z.array(z.string()),
   image: z.string().url('Must be a valid URL'),
-});
-
-type PropertyFormData = z.infer<typeof propertySchema>;
+}) satisfies z.ZodType<PropertyFormData>;
 
 interface PropertyFormProps {
   property?: Property;
@@ -190,7 +202,13 @@ export default function PropertyForm({ property, onSubmit, isSubmitting }: Prope
               <FormItem>
                 <FormLabel>Bedrooms</FormLabel>
                 <FormControl>
-                  <Input type="number" min="0" {...field} />
+                  <Input 
+                    type="number" 
+                    min="0" 
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    value={field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -204,7 +222,14 @@ export default function PropertyForm({ property, onSubmit, isSubmitting }: Prope
               <FormItem>
                 <FormLabel>Bathrooms</FormLabel>
                 <FormControl>
-                  <Input type="number" min="0" step="0.5" {...field} />
+                  <Input 
+                    type="number" 
+                    min="0" 
+                    step="0.5" 
+                    {...field}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                    value={field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
