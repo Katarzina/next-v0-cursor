@@ -94,3 +94,6 @@ logs
 # Temporary folders
 tmp/
 temp/
+
+# Prisma tutorial folder (not part of main app)
+hello-prisma/

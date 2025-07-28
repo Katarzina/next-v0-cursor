@@ -28,3 +28,6 @@ yarn-error.log*
 # Development
 .vscode/
 .idea/
+
+# Prisma tutorial folder (not part of main app)
+hello-prisma/
