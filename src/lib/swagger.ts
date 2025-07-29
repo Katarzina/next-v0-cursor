@@ -8,8 +8,8 @@ export const getApiDocs = () => {
       },
       servers: [
         {
-          url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-          description: 'Development server',
+          url: process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+          description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
         },
       ],
       components: {
