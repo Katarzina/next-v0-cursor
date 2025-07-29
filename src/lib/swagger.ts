@@ -234,6 +234,14 @@ export const getApiDocs = () => {
           name: 'Blog',
           description: 'Blog post management endpoints',
         },
+        {
+          name: 'User Profile',
+          description: 'User profile management endpoints',
+        },
+        {
+          name: 'Admin',
+          description: 'Administrative endpoints (Admin role required)',
+        },
       ],
     paths: {
       '/api/auth/signup': {
@@ -565,6 +573,435 @@ export const getApiDocs = () => {
                   schema: { $ref: '#/components/schemas/BlogPost' }
                 }
               }
+            }
+          }
+        }
+      },
+      '/api/user/profile': {
+        put: {
+          tags: ['User Profile'],
+          summary: 'Update user profile',
+          description: 'Update user profile information and password',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['name', 'email'],
+                  properties: {
+                    name: { type: 'string', minLength: 2 },
+                    email: { type: 'string', format: 'email' },
+                    currentPassword: { type: 'string', minLength: 6 },
+                    newPassword: { type: 'string', minLength: 6 }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            200: {
+              description: 'Profile updated successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' },
+                      user: { $ref: '#/components/schemas/User' }
+                    }
+                  }
+                }
+              }
+            },
+            400: {
+              description: 'Bad request - invalid data or password incorrect'
+            },
+            401: {
+              description: 'Unauthorized - authentication required'
+            }
+          }
+        }
+      },
+      '/api/admin/users': {
+        get: {
+          tags: ['Admin'],
+          summary: 'Get all users (Admin only)',
+          description: 'Retrieve all users with their basic information and property counts',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          responses: {
+            200: {
+              description: 'List of all users',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      users: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            name: { type: 'string' },
+                            email: { type: 'string' },
+                            role: { type: 'string', enum: ['USER', 'AGENT', 'ADMIN'] },
+                            createdAt: { type: 'string', format: 'date-time' },
+                            _count: {
+                              type: 'object',
+                              properties: {
+                                properties: { type: 'integer' }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        }
+      },
+      '/api/admin/users/{id}': {
+        put: {
+          tags: ['Admin'],
+          summary: 'Update user role (Admin only)',
+          description: 'Update a user\'s role. Admins cannot change their own role.',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'User ID'
+            }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['role'],
+                  properties: {
+                    role: { type: 'string', enum: ['USER', 'AGENT', 'ADMIN'] }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            200: {
+              description: 'User role updated successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' },
+                      user: { $ref: '#/components/schemas/User' }
+                    }
+                  }
+                }
+              }
+            },
+            400: {
+              description: 'Bad request - cannot change own role'
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        },
+        delete: {
+          tags: ['Admin'],
+          summary: 'Delete user (Admin only)',
+          description: 'Delete a user account. Admins cannot delete their own account.',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'User ID'
+            }
+          ],
+          responses: {
+            200: {
+              description: 'User deleted successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' }
+                    }
+                  }
+                }
+              }
+            },
+            400: {
+              description: 'Bad request - cannot delete own account'
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        }
+      },
+      '/api/admin/properties': {
+        get: {
+          tags: ['Admin'],
+          summary: 'Get all properties (Admin only)',
+          description: 'Retrieve all properties with owner information',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          responses: {
+            200: {
+              description: 'List of all properties',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      properties: {
+                        type: 'array',
+                        items: {
+                          allOf: [
+                            { $ref: '#/components/schemas/Property' },
+                            {
+                              type: 'object',
+                              properties: {
+                                user: {
+                                  type: 'object',
+                                  properties: {
+                                    name: { type: 'string' },
+                                    email: { type: 'string' }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        }
+      },
+      '/api/admin/properties/{id}': {
+        put: {
+          tags: ['Admin'],
+          summary: 'Update property (Admin only)',
+          description: 'Update property status (e.g., featured status)',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'integer' },
+              description: 'Property ID'
+            }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    featured: { type: 'boolean' }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            200: {
+              description: 'Property updated successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' },
+                      property: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'integer' },
+                          title: { type: 'string' },
+                          featured: { type: 'boolean' }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        },
+        delete: {
+          tags: ['Admin'],
+          summary: 'Delete property (Admin only)',
+          description: 'Delete any property as administrator',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'integer' },
+              description: 'Property ID'
+            }
+          ],
+          responses: {
+            200: {
+              description: 'Property deleted successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        }
+      },
+      '/api/admin/agents': {
+        get: {
+          tags: ['Admin'],
+          summary: 'Get all agents (Admin only)',
+          description: 'Retrieve all agents with their statistics',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          responses: {
+            200: {
+              description: 'List of all agents',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      agents: {
+                        type: 'array',
+                        items: { $ref: '#/components/schemas/Agent' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        }
+      },
+      '/api/admin/agents/{id}': {
+        delete: {
+          tags: ['Admin'],
+          summary: 'Delete agent (Admin only)',
+          description: 'Delete an agent profile',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'integer' },
+              description: 'Agent ID'
+            }
+          ],
+          responses: {
+            200: {
+              description: 'Agent deleted successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
+            }
+          }
+        }
+      },
+      '/api/admin/stats': {
+        get: {
+          tags: ['Admin'],
+          summary: 'Get platform statistics (Admin only)',
+          description: 'Retrieve comprehensive platform statistics and analytics',
+          security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+          responses: {
+            200: {
+              description: 'Platform statistics',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      stats: {
+                        type: 'object',
+                        properties: {
+                          totalUsers: { type: 'integer' },
+                          totalProperties: { type: 'integer' },
+                          totalAgents: { type: 'integer' },
+                          totalInquiries: { type: 'integer' },
+                          recentUserGrowth: { type: 'integer' },
+                          recentPropertyGrowth: { type: 'integer' },
+                          usersByRole: {
+                            type: 'object',
+                            properties: {
+                              USER: { type: 'integer' },
+                              AGENT: { type: 'integer' },
+                              ADMIN: { type: 'integer' }
+                            }
+                          },
+                          propertiesByStatus: {
+                            type: 'object',
+                            properties: {
+                              featured: { type: 'integer' },
+                              regular: { type: 'integer' }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: 'Unauthorized - Admin access required'
             }
           }
         }

@@ -68,30 +68,14 @@ export default function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         
-        {session.user.role === 'USER' && (
-          <DropdownMenuItem asChild>
-            <Link href="/dashboard" className="cursor-pointer">
-              <Home className="mr-2 h-4 w-4" />
-              My Properties
-            </Link>
-          </DropdownMenuItem>
-        )}
         
         {session.user.role === 'AGENT' && (
-          <>
-            <DropdownMenuItem asChild>
-              <Link href="/agent/properties" className="cursor-pointer">
-                <Home className="mr-2 h-4 w-4" />
-                Manage Properties
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/agent/profile" className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                Agent Profile
-              </Link>
-            </DropdownMenuItem>
-          </>
+          <DropdownMenuItem asChild>
+            <Link href="/agent/properties" className="cursor-pointer">
+              <Home className="mr-2 h-4 w-4" />
+              Manage Properties
+            </Link>
+          </DropdownMenuItem>
         )}
         
         {session.user.role === 'ADMIN' && (

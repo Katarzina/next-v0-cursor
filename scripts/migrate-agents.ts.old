@@ -1,0 +1,202 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function migrateAgentsToProfiles() {
+  console.log('🚀 Starting agent migration...');
+
+  try {
+    // 1. Создаем новую таблицу AgentProfile (это будет в новой schema)
+    console.log('📋 Step 1: AgentProfile table should already exist');
+
+    // 2. Переносим данные из Agent в AgentProfile
+    console.log('📦 Step 2: Migrating data from Agent to AgentProfile...');
+    
+    const existingAgents = await prisma.agent.findMany({
+      include: {
+        user: true
+      }
+    });
+
+    console.log(`Found ${existingAgents.length} agents to migrate`);
+
+    for (const agent of existingAgents) {
+      if (!agent.userId) {
+        console.log(`⚠️ Skipping agent ${agent.id} - no userId`);
+        continue;
+      }
+
+      try {
+        // Проверяем, не существует ли уже AgentProfile для этого пользователя
+        const existingProfile = await prisma.agentProfile.findUnique({
+          where: { userId: agent.userId }
+        });
+
+        if (existingProfile) {
+          console.log(`⚠️ AgentProfile already exists for user ${agent.userId}`);
+          continue;
+        }
+
+        // Создаем новый AgentProfile
+        await prisma.agentProfile.create({
+          data: {
+            userId: agent.userId,
+            title: agent.title,
+            image: agent.image,
+            bio: agent.bio,
+            phone: agent.phone,
+            rating: agent.rating,
+            reviewCount: agent.reviewCount,
+            soldProperties: agent.soldProperties,
+            yearsExperience: agent.yearsExperience,
+            languages: agent.languages,
+            specialties: agent.specialties,
+            createdAt: agent.createdAt,
+            updatedAt: agent.updatedAt,
+          }
+        });
+
+        console.log(`✅ Migrated agent ${agent.id} -> AgentProfile for user ${agent.userId}`);
+      } catch (error) {
+        console.error(`❌ Error migrating agent ${agent.id}:`, error);
+      }
+    }
+
+    // 3. Обновляем связи в таблице Inquiry
+    console.log('🔗 Step 3: Updating Inquiry relations...');
+    
+    const inquiriesWithAgents = await prisma.inquiry.findMany({
+      where: {
+        agentId: { not: null }
+      },
+      include: {
+        agent: {
+          include: {
+            user: true
+          }
+        }
+      }
+    });
+
+    console.log(`Found ${inquiriesWithAgents.length} inquiries to update`);
+
+    for (const inquiry of inquiriesWithAgents) {
+      if (!inquiry.agent?.userId) continue;
+
+      try {
+        const agentProfile = await prisma.agentProfile.findUnique({
+          where: { userId: inquiry.agent.userId }
+        });
+
+        if (agentProfile) {
+          await prisma.inquiry.update({
+            where: { id: inquiry.id },
+            data: {
+              agentProfileId: agentProfile.id,
+              // agentId останется пока что для совместимости
+            }
+          });
+          console.log(`✅ Updated inquiry ${inquiry.id} relation`);
+        }
+      } catch (error) {
+        console.error(`❌ Error updating inquiry ${inquiry.id}:`, error);
+      }
+    }
+
+    // 4. Обновляем связи в таблице Review
+    console.log('⭐ Step 4: Updating Review relations...');
+
+    const reviewsWithAgents = await prisma.review.findMany({
+      where: {
+        agentId: { not: null }
+      },
+      include: {
+        agent: {
+          include: {
+            user: true
+          }
+        }
+      }
+    });
+
+    console.log(`Found ${reviewsWithAgents.length} reviews to update`);
+
+    for (const review of reviewsWithAgents) {
+      if (!review.agent?.userId) continue;
+
+      try {
+        const agentProfile = await prisma.agentProfile.findUnique({
+          where: { userId: review.agent.userId }
+        });
+
+        if (agentProfile) {
+          await prisma.review.update({
+            where: { id: review.id },
+            data: {
+              agentProfileId: agentProfile.id,
+              // agentId останется пока что для совместимости
+            }
+          });
+          console.log(`✅ Updated review ${review.id} relation`);
+        }
+      } catch (error) {
+        console.error(`❌ Error updating review ${review.id}:`, error);
+      }
+    }
+
+    console.log('✅ Migration completed successfully!');
+    console.log('');
+    console.log('🔄 Next steps:');
+    console.log('1. Update your application code to use AgentProfile instead of Agent');
+    console.log('2. Test thoroughly in development');
+    console.log('3. When ready, drop the old Agent table columns');
+    console.log('4. Update Prisma schema to remove Agent model');
+
+  } catch (error) {
+    console.error('❌ Migration failed:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// Функция для отката миграции (на случай проблем)
+async function rollbackMigration() {
+  console.log('🔄 Rolling back migration...');
+  
+  try {
+    // Удаляем все AgentProfile записи
+    await prisma.agentProfile.deleteMany({});
+    
+    // Очищаем новые связи в Inquiry и Review
+    await prisma.inquiry.updateMany({
+      where: { agentProfileId: { not: null } },
+      data: { agentProfileId: null }
+    });
+    
+    await prisma.review.updateMany({
+      where: { agentProfileId: { not: null } },
+      data: { agentProfileId: null }
+    });
+
+    console.log('✅ Rollback completed');
+  } catch (error) {
+    console.error('❌ Rollback failed:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// Запуск миграции
+if (require.main === module) {
+  const command = process.argv[2];
+  
+  if (command === 'rollback') {
+    rollbackMigration();
+  } else {
+    migrateAgentsToProfiles();
+  }
+}
+
+export { migrateAgentsToProfiles, rollbackMigration };

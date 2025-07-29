@@ -25,7 +25,7 @@ model User {
   properties    Property[] @relation("UserProperties")
   favorites     Favorite[]
   inquiries     Inquiry[]
-  agentProfile  AgentProfile? // Связь с профилем агента
+  agentProfile  AgentProfile? // One-to-one relation
 }
 
 // NextAuth.js models
@@ -79,7 +79,6 @@ model AgentProfile {
   
   // Agent-specific fields
   title           String    // e.g. "Senior Real Estate Agent"
-  image           String    // Agent photo
   bio             String    @db.Text
   phone           String
   rating          Float     @default(0)
@@ -141,7 +140,7 @@ model Inquiry {
   property   Property? @relation(fields: [propertyId], references: [id])
   propertyId Int?
   
-  // Связь с AgentProfile
+  // Relation to AgentProfile instead of Agent
   agentProfile   AgentProfile? @relation(fields: [agentProfileId], references: [id])
   agentProfileId Int?
 }
@@ -182,7 +181,7 @@ model Review {
   comment        String       @db.Text
   createdAt      DateTime     @default(now())
   
-  // Связь с AgentProfile
+  // Relations to AgentProfile instead of Agent
   agentProfile   AgentProfile @relation(fields: [agentProfileId], references: [id])
   agentProfileId Int
 }

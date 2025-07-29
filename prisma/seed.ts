@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
   // Clear existing data
   await prisma.property.deleteMany()
-  await prisma.agent.deleteMany()
+  await prisma.agentProfile.deleteMany()
   await prisma.blogPost.deleteMany()
   await prisma.user.deleteMany()
   
@@ -55,10 +55,9 @@ async function main() {
   console.log('- Agent: michael.chen@propertyfinder.com / password123')
   console.log('- User: user@example.com / password123')
   
-  // Create agents linked to users
-  const agent1 = await prisma.agent.create({
+  // Create agent profiles linked to users
+  const agent1 = await prisma.agentProfile.create({
     data: {
-      name: "Sarah Johnson",
       title: "Senior Real Estate Agent",
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=60",
       rating: 4.9,
@@ -68,15 +67,13 @@ async function main() {
       languages: ["English", "Spanish"],
       specialties: ["Luxury Homes", "Investment Properties", "First-time Buyers"],
       phone: "+1 (555) 123-4567",
-      email: "sarah.johnson@propertyfinder.com",
       bio: "With over 12 years of experience in New York real estate, Sarah specializes in luxury properties and has helped hundreds of clients find their dream homes.",
       userId: agentUser1.id
     }
   })
   
-  const agent2 = await prisma.agent.create({
+  const agent2 = await prisma.agentProfile.create({
     data: {
-      name: "Michael Chen",
       title: "Real Estate Consultant",
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&auto=format&fit=crop&q=60",
       rating: 4.8,
@@ -86,75 +83,12 @@ async function main() {
       languages: ["English", "Mandarin", "Cantonese"],
       specialties: ["Commercial Properties", "Condos", "International Buyers"],
       phone: "+1 (555) 234-5678",
-      email: "michael.chen@propertyfinder.com",
       bio: "Michael brings a global perspective to real estate, helping international clients navigate the New York market with expertise and cultural understanding.",
       userId: agentUser2.id
     }
   })
   
-  // Create other agents without user accounts
-  const agents = await prisma.agent.createMany({
-    data: [
-      {
-        name: "Emily Rodriguez",
-        title: "Property Specialist",
-        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&auto=format&fit=crop&q=60",
-        rating: 4.9,
-        reviewCount: 115,
-        soldProperties: 142,
-        yearsExperience: 10,
-        languages: ["English", "Spanish", "Portuguese"],
-        specialties: ["Family Homes", "Relocations", "Neighborhoods"],
-        phone: "+1 (555) 345-6789",
-        email: "emily.rodriguez@propertyfinder.com",
-        bio: "Emily is passionate about helping families find the perfect home. Her deep knowledge of New York neighborhoods makes her an invaluable resource."
-      },
-      {
-        name: "David Kim",
-        title: "Luxury Property Expert",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=60",
-        rating: 5.0,
-        reviewCount: 89,
-        soldProperties: 178,
-        yearsExperience: 15,
-        languages: ["English", "Korean"],
-        specialties: ["Penthouses", "Waterfront Properties", "High-end Rentals"],
-        phone: "+1 (555) 456-7890",
-        email: "david.kim@propertyfinder.com",
-        bio: "David is the go-to expert for luxury real estate in New York. His attention to detail and market knowledge ensure clients get the best value."
-      },
-      {
-        name: "Anna Petrova",
-        title: "Investment Property Advisor",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800&auto=format&fit=crop&q=60",
-        rating: 4.7,
-        reviewCount: 76,
-        soldProperties: 98,
-        yearsExperience: 6,
-        languages: ["English", "Russian", "Ukrainian"],
-        specialties: ["Investment Properties", "Rental Income", "Market Analysis"],
-        phone: "+1 (555) 567-8901",
-        email: "anna.petrova@propertyfinder.com",
-        bio: "Anna helps investors maximize their returns in the New York real estate market with data-driven insights and strategic property selection."
-      },
-      {
-        name: "James Thompson",
-        title: "Relocation Specialist",
-        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop&q=60",
-        rating: 4.8,
-        reviewCount: 103,
-        soldProperties: 125,
-        yearsExperience: 9,
-        languages: ["English", "French"],
-        specialties: ["Corporate Relocations", "Furnished Rentals", "Short-term Leases"],
-        phone: "+1 (555) 678-9012",
-        email: "james.thompson@propertyfinder.com",
-        bio: "James specializes in helping professionals and families relocate to New York, providing comprehensive support throughout the entire process."
-      }
-    ]
-  })
-  
-  console.log(`Created ${agents.count + 2} agents`)
+  console.log('Created 2 agent profiles')
   
   // Create properties
   const properties = await prisma.property.createMany({
