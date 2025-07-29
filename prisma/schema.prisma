@@ -4,8 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // Use POSTGRES_PRISMA_URL for Vercel Postgres, DATABASE_URL for local dev
-  url      = env("POSTGRES_PRISMA_URL") 
+  // Use PRISMA_DATABASE_URL for Prisma Accelerate
+  url      = env("PRISMA_DATABASE_URL") 
 }
 
 // User model for authentication and authorization

@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx prisma/seed.ts",
+    "db:push:prod": "dotenv -e .env.production.local -- prisma db push",
+    "db:seed:prod": "dotenv -e .env.production.local -- tsx prisma/seed.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
