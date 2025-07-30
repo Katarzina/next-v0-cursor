@@ -441,7 +441,7 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
 
       {/* Schedule Tour Modal */}
       <Dialog open={isTourOpen} onOpenChange={setIsTourOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Schedule a Tour</DialogTitle>
             <DialogDescription>
