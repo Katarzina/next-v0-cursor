@@ -342,6 +342,7 @@ export const uk = {
     noPostsFound: 'Не знайдено статей, що відповідають вашим критеріям.',
     minRead: 'хв читання',
     readMore: 'Читати далі',
+    backToBlog: 'Назад до блогу',
     previous: 'Попередня',
     next: 'Наступна',
     page: 'Сторінка',

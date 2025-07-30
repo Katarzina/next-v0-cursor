@@ -342,6 +342,7 @@ export const cs = {
     noPostsFound: 'Nebyly nalezeny žádné příspěvky odpovídající vašim kritériím.',
     minRead: 'min čtení',
     readMore: 'Číst více',
+    backToBlog: 'Zpět na blog',
     previous: 'Předchozí',
     next: 'Další',
     page: 'Stránka',
