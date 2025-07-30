@@ -12,9 +12,10 @@ import { Agent } from '@/types';
 interface AgentCardProps {
   agent: Agent;
   onContact: (agent: Agent) => void;
+  priority?: boolean;
 }
 
-export default function AgentCard({ agent, onContact }: AgentCardProps) {
+export default function AgentCard({ agent, onContact, priority = false }: AgentCardProps) {
   const { t } = useLocale();
 
   return (
@@ -25,6 +26,7 @@ export default function AgentCard({ agent, onContact }: AgentCardProps) {
           alt={agent.name}
           fill
           className="object-cover"
+          priority={priority}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-4 left-4 text-white">

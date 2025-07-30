@@ -171,7 +171,37 @@ async function main() {
         title: "10 Tips for First-Time Home Buyers in New York",
         slug: "10-tips-first-time-home-buyers-nyc",
         excerpt: "Navigate the competitive NYC real estate market with confidence. Essential tips for first-time buyers.",
-        content: "Buying your first home in New York City can be overwhelming. Here are 10 essential tips to help you navigate the process...",
+        content: `Buying your first home in New York City can be overwhelming. Here are 10 essential tips to help you navigate the process.
+
+1. Get Pre-Approved for a Mortgage
+Before you start house hunting, get pre-approved for a mortgage. This will give you a clear idea of your budget and show sellers that you're a serious buyer. Shop around with multiple lenders to find the best rates and terms.
+
+2. Understand the True Cost of Ownership
+Remember that the purchase price is just the beginning. Factor in property taxes, homeowners insurance, HOA fees (if applicable), maintenance costs, and utilities. In NYC, these can add up to 20-30% on top of your mortgage payment.
+
+3. Work with a Local Real Estate Agent
+A knowledgeable local agent can be invaluable in navigating NYC's competitive market. They'll have access to listings before they hit the public market and can guide you through the complex buying process.
+
+4. Be Prepared to Move Quickly
+In NYC's fast-paced market, desirable properties can receive multiple offers within days. Have your documents ready, be prepared to make decisions quickly, and don't hesitate when you find the right home.
+
+5. Consider All Neighborhoods
+Don't limit yourself to just Manhattan. Brooklyn, Queens, and the Bronx offer great value and emerging neighborhoods with excellent transportation links to Manhattan.
+
+6. Understand Co-ops vs. Condos
+Co-ops make up about 75% of NYC's apartment inventory. They're often cheaper but have stricter approval processes and rules. Condos are more expensive but offer more flexibility.
+
+7. Budget for Closing Costs
+Closing costs in NYC can range from 2-6% of the purchase price. This includes attorney fees, title insurance, recording fees, and transfer taxes. Factor these into your budget from the start.
+
+8. Get a Thorough Inspection
+Even in new buildings, inspections are crucial. Look for issues with plumbing, electrical systems, HVAC, and signs of water damage. In older buildings, pay special attention to the building's overall condition.
+
+9. Review Building Financials
+If buying in a co-op or condo, carefully review the building's financial statements. Look for adequate reserves, reasonable maintenance fees, and any planned assessments.
+
+10. Think Long-Term
+Consider your five-year plan. NYC real estate is a long-term investment, and selling too quickly can result in losses due to high transaction costs. Choose a home that will meet your needs for years to come.`,
         image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=60",
         author: "Sarah Johnson",
         authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=60",

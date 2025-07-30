@@ -8,9 +8,6 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx prisma/seed.ts",
-    "db:push:prod": "dotenv -e .env.production.local -- prisma db push",
-    "db:seed:prod": "dotenv -e .env.production.local -- tsx prisma/seed.ts",
-    "fix:blog:prod": "dotenv -e .env.production.local -- node scripts/fix-production-blog.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {

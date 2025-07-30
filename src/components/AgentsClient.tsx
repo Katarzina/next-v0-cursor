@@ -80,18 +80,6 @@ export default function AgentsClient({ initialAgents }: AgentsClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-center">
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Users className="w-6 h-6" />
-              {t.nav.agents}
-            </h1>
-          </div>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -171,11 +159,12 @@ export default function AgentsClient({ initialAgents }: AgentsClientProps) {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAgents.map(agent => (
+          {filteredAgents.map((agent, index) => (
             <AgentCard
               key={agent.id}
               agent={agent}
               onContact={handleContact}
+              priority={index < 3}
             />
           ))}
         </div>

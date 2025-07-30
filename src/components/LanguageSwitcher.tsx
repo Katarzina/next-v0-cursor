@@ -18,10 +18,10 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{localeFlags[locale]} {localeNames[locale]}</span>
-          <span className="sm:hidden">{localeFlags[locale]}</span>
+        <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
+          <Globe className="h-4 w-4 hidden sm:inline" />
+          <span className="hidden min-[400px]:inline">{localeFlags[locale]} {localeNames[locale]}</span>
+          <span className="min-[400px]:hidden text-xs font-semibold">{locale.toUpperCase()}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

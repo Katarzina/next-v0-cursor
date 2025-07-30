@@ -5,38 +5,36 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Search, MapPin, Home, DollarSign } from "lucide-react";
-import { useRouter } from 'next/navigation';
 import { useLocale } from '@/contexts/LocaleContext';
 
-export default function SearchComponent() {
-  const router = useRouter();
+interface SearchComponentProps {
+  onSearch?: (filters: {
+    query: string;
+    propertyType: string;
+    priceRange: string;
+    location: string;
+  }) => void;
+}
+
+export default function SearchComponent({ onSearch }: SearchComponentProps) {
   const { t } = useLocale();
   const [searchQuery, setSearchQuery] = useState('');
   const [propertyType, setPropertyType] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [location, setLocation] = useState('all');
+  const [lookingTo, setLookingTo] = useState('all'); // Separate state for buy/rent
 
   const handleSearch = () => {
-    // Build query parameters
-    const params = new URLSearchParams();
-    if (searchQuery) params.append('q', searchQuery);
-    if (propertyType !== 'all') params.append('type', propertyType);
-    if (priceRange !== 'all') params.append('price', priceRange);
-    if (location !== 'all') params.append('location', location);
-    
-    // Navigate to search results page (we'll create this later)
-    router.push(`/search?${params.toString()}`);
-  };
-
-  const handleQuickAction = (action: string) => {
-    if (action === 'buy') {
-      router.push('/search?type=buy');
-    } else if (action === 'rent') {
-      router.push('/search?type=rent');
-    } else if (action === 'contact') {
-      router.push('/contact');
+    if (onSearch) {
+      onSearch({
+        query: searchQuery,
+        propertyType,
+        priceRange,
+        location
+      });
     }
   };
+
 
   return (
     <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-50 to-white">
@@ -60,7 +58,17 @@ export default function SearchComponent() {
                   <MapPin className="w-4 h-4 mr-1" />
                   {t.hero.location}
                 </label>
-                <Select value={location} onValueChange={setLocation}>
+                <Select value={location} onValueChange={(value) => {
+                  setLocation(value);
+                  if (onSearch) {
+                    onSearch({
+                      query: searchQuery,
+                      propertyType,
+                      priceRange,
+                      location: value
+                    });
+                  }
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder={t.hero.allLocations} />
                   </SelectTrigger>
@@ -81,7 +89,17 @@ export default function SearchComponent() {
                   <Home className="w-4 h-4 mr-1" />
                   {t.hero.propertyType}
                 </label>
-                <Select value={propertyType} onValueChange={setPropertyType}>
+                <Select value={propertyType} onValueChange={(value) => {
+                  setPropertyType(value);
+                  if (onSearch) {
+                    onSearch({
+                      query: searchQuery,
+                      propertyType: value,
+                      priceRange,
+                      location
+                    });
+                  }
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder={t.hero.allTypes} />
                   </SelectTrigger>
@@ -102,7 +120,17 @@ export default function SearchComponent() {
                   <DollarSign className="w-4 h-4 mr-1" />
                   {t.hero.priceRange}
                 </label>
-                <Select value={priceRange} onValueChange={setPriceRange}>
+                <Select value={priceRange} onValueChange={(value) => {
+                  setPriceRange(value);
+                  if (onSearch) {
+                    onSearch({
+                      query: searchQuery,
+                      propertyType,
+                      priceRange: value,
+                      location
+                    });
+                  }
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder={t.hero.anyPrice} />
                   </SelectTrigger>
@@ -124,16 +152,16 @@ export default function SearchComponent() {
                 </label>
                 <div className="flex gap-2">
                   <Button 
-                    variant={propertyType === 'buy' ? 'default' : 'outline'}
+                    variant={lookingTo === 'buy' ? 'default' : 'outline'}
                     className="flex-1"
-                    onClick={() => setPropertyType('buy')}
+                    onClick={() => setLookingTo('buy')}
                   >
                     {t.hero.buy}
                   </Button>
                   <Button 
-                    variant={propertyType === 'rent' ? 'default' : 'outline'}
+                    variant={lookingTo === 'rent' ? 'default' : 'outline'}
                     className="flex-1"
-                    onClick={() => setPropertyType('rent')}
+                    onClick={() => setLookingTo('rent')}
                   >
                     {t.hero.rent}
                   </Button>
@@ -162,33 +190,6 @@ export default function SearchComponent() {
             </div>
           </div>
 
-          {/* Quick Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="h-12 px-8 text-base font-medium"
-              onClick={() => handleQuickAction('buy')}
-            >
-              {t.hero.browseSale}
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="h-12 px-8 text-base font-medium"
-              onClick={() => handleQuickAction('rent')}
-            >
-              {t.hero.findRentals}
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="h-12 px-8 text-base font-medium"
-              onClick={() => handleQuickAction('contact')}
-            >
-              {t.hero.contactAgent}
-            </Button>
-          </div>
 
           {/* Statistics */}
           <div className="grid grid-cols-3 gap-8 pt-8">

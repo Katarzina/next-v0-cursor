@@ -45,18 +45,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/properties" className="text-sm hover:text-white transition-colors">
-                  {t.nav.properties}
-                </Link>
-              </li>
-              <li>
                 <Link href="/agents" className="text-sm hover:text-white transition-colors">
                   {t.nav.agents}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm hover:text-white transition-colors">
-                  {t.footer.aboutUs}
+                <Link href="/api-docs" className="text-sm hover:text-white transition-colors">
+                  API
                 </Link>
               </li>
               <li>

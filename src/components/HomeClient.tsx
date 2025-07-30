@@ -38,6 +38,14 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
     message: ''
   });
   const [isTourOpen, setIsTourOpen] = useState(false);
+  
+  // Search filters
+  const [searchFilters, setSearchFilters] = useState({
+    query: '',
+    propertyType: 'all',
+    priceRange: 'all',
+    location: 'all'
+  });
   const [tourDate, setTourDate] = useState<Date | undefined>(undefined);
   const [tourTime, setTourTime] = useState<string>('');
   const [tourForm, setTourForm] = useState<TourFormData>({
@@ -151,10 +159,73 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
     '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
   ];
 
+  // Filter properties based on search criteria
+  const filteredProperties = initialProperties.filter(property => {
+    // Filter by search query
+    if (searchFilters.query && !property.title.toLowerCase().includes(searchFilters.query.toLowerCase()) &&
+        !property.location.toLowerCase().includes(searchFilters.query.toLowerCase())) {
+      return false;
+    }
+
+    // Filter by property type
+    if (searchFilters.propertyType !== 'all') {
+      // Map property types from search to property data
+      const propertyTypeMap: Record<string, string[]> = {
+        'apartment': ['apartment', 'loft', 'studio'],
+        'house': ['house'],
+        'condo': ['condo'],
+        'studio': ['studio'],
+        'loft': ['loft']
+      };
+      
+      const validTypes = propertyTypeMap[searchFilters.propertyType] || [];
+      const propertyType = property.title.toLowerCase();
+      
+      if (!validTypes.some(type => propertyType.includes(type))) {
+        return false;
+      }
+    }
+
+    // Filter by price range
+    if (searchFilters.priceRange !== 'all') {
+      const price = parseInt(property.price.replace(/[^0-9]/g, ''));
+      const [min, max] = searchFilters.priceRange.split('-').map(p => 
+        p === '+' ? Infinity : parseInt(p)
+      );
+      
+      if (max === undefined) {
+        // Handle "5000+" case
+        if (price < min) return false;
+      } else {
+        if (price < min || price > max) return false;
+      }
+    }
+
+    // Filter by location
+    if (searchFilters.location !== 'all') {
+      const locationMap: Record<string, string[]> = {
+        'downtown': ['downtown'],
+        'brooklyn': ['brooklyn'],
+        'upper-east-side': ['upper east side'],
+        'soho': ['soho'],
+        'greenwich': ['greenwich']
+      };
+      
+      const validLocations = locationMap[searchFilters.location] || [];
+      const propertyLocation = property.location.toLowerCase();
+      
+      if (!validLocations.some(loc => propertyLocation.includes(loc))) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <SearchComponent />
+      <SearchComponent onSearch={setSearchFilters} />
 
       {/* Agent Banner */}
       {session?.user?.role === 'AGENT' && (
@@ -179,7 +250,7 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
       {/* Apartment Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {initialProperties.map((apartment) => (
+          {filteredProperties.map((apartment) => (
             <PropertyCard
               key={apartment.id}
               apartment={apartment}
@@ -191,19 +262,6 @@ export default function HomeClient({ initialProperties }: HomeClientProps) {
               }}
             />
           ))}
-        </div>
-        
-        {/* Call to Action */}
-        <div className="text-center mt-16">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Looking for something specific?
-          </h2>
-          <p className="text-gray-600 mb-8 max-w-lg mx-auto">
-            Our team can help you find the perfect apartment that matches your needs and budget.
-          </p>
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-200">
-            Browse More Listings
-          </Button>
         </div>
       </div>
 

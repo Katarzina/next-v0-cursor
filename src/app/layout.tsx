@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <AuthProvider>
           <RecoilProvider>
             <LocaleProvider>
@@ -42,7 +42,9 @@ export default function RootLayout({
                 {/* Logo */}
                 <div className="flex-shrink-0">
                   <a href="/" className="text-xl font-bold text-gray-900">
-                    PropertyFinder
+                    <span className="hidden sm:inline">PropertyFinder</span>
+                    <span className="hidden min-[400px]:inline sm:hidden">PFinder</span>
+                    <span className="min-[400px]:hidden">PF</span>
                   </a>
                 </div>
                 

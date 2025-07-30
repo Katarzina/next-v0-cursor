@@ -342,6 +342,7 @@ export const en = {
     noPostsFound: 'No posts found matching your criteria.',
     minRead: 'min read',
     readMore: 'Read More',
+    backToBlog: 'Back to Blog',
     previous: 'Previous',
     next: 'Next',
     page: 'Page',
