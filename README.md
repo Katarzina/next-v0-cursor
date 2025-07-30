@@ -2,6 +2,8 @@
 
 A modern real estate platform built with Next.js 13+ and TypeScript, featuring property listings, agent directory, and multilingual support.
 
+🌐 **Live Demo**: [Project deployed here](https://next-v0-cursor-a77v.vercel.app/)
+
 ## 🚀 Features
 
 ### Core Functionality
