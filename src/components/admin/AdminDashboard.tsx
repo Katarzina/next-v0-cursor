@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Users, Home, UserCheck, Settings, BarChart3, AlertTriangle } from 'lucide-react';
 import { AdminUsersTab } from './AdminUsersTab';
 import { AdminPropertiesTab } from './AdminPropertiesTab';
@@ -15,6 +17,11 @@ export function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <Link href="/crm">
+          <Button variant="outline">Открыть CRM →</Button>
+        </Link>
+      </div>
       {/* Quick Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>

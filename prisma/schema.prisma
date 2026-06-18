@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("PRISMA_DATABASE_URL") 
+  url      = env("DATABASE_URL")
 }
 
 // User model for authentication and authorization
@@ -69,6 +69,38 @@ enum UserRole {
   USER
   AGENT
   ADMIN
+}
+
+enum LeadStage {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  WON
+  LOST
+}
+
+enum LeadSource {
+  WEBSITE
+  TELEGRAM
+  EMAIL
+  FACEBOOK
+  YOUTUBE
+  REFERRAL
+  OTHER
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String     @db.Text
+  stage     LeadStage  @default(NEW)
+  source    LeadSource @default(WEBSITE)
+  notes     String?    @db.Text
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 // AgentProfile - дополнительная информация для пользователей с ролью AGENT

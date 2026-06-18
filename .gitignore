@@ -97,3 +97,4 @@ temp/
 
 # Prisma tutorial folder (not part of main app)
 hello-prisma/
+.env*

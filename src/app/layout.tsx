@@ -5,6 +5,7 @@ import RecoilProvider from '@/components/RecoilProvider';
 import AuthProvider from '@/components/AuthProvider';
 import UserNav from '@/components/UserNav';
 import { Toaster } from '@/components/ui/toaster';
+import ChatWidget from '@/components/chat/ChatWidget';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
@@ -78,6 +79,7 @@ export default function RootLayout({
               {children}
             </main>
             <Toaster />
+            <ChatWidget />
             </LocaleProvider>
           </RecoilProvider>
         </AuthProvider>

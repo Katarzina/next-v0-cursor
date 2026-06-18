@@ -21,6 +21,16 @@ async function main() {
       role: UserRole.ADMIN
     }
   })
+
+  const demoHashedPassword = await bcrypt.hash('Demo2024!', 12)
+  await prisma.user.create({
+    data: {
+      email: 'demo@automation-studio.com',
+      name: 'Demo Admin',
+      password: demoHashedPassword,
+      role: UserRole.ADMIN
+    }
+  })
   
   const agentUser1 = await prisma.user.create({
     data: {
@@ -285,6 +295,26 @@ Consider your five-year plan. NYC real estate is a long-term investment, and sel
   })
   
   console.log(`Created ${blogPosts.count} blog posts`)
+
+  // CRM demo leads
+  await prisma.lead.deleteMany()
+  await prisma.lead.createMany({
+    data: [
+      { name: 'Алексей Петров', email: 'alexey@gmail.com', phone: '+7 900 123 4567', message: 'Интересует автоматизация отдела продаж', stage: 'NEW', source: 'WEBSITE' },
+      { name: 'Марина Козлова', email: 'marina@biz.ru', phone: '+7 910 234 5678', message: 'Нужен чат-бот для сайта', stage: 'NEW', source: 'TELEGRAM' },
+      { name: 'Дмитрий Соколов', email: 'dmitry@company.com', phone: '+7 920 345 6789', message: 'Хотим автоматизировать email-рассылки', stage: 'CONTACTED', source: 'WEBSITE' },
+      { name: 'Ольга Новикова', email: 'olga@startup.io', message: 'Интересует CRM-система для команды', stage: 'CONTACTED', source: 'REFERRAL' },
+      { name: 'Иван Морозов', email: 'ivan@trade.ru', phone: '+7 930 456 7890', message: 'Автоматизация обработки заказов', stage: 'QUALIFIED', source: 'WEBSITE' },
+      { name: 'Татьяна Волкова', email: 'tatyana@salon.ru', phone: '+7 940 567 8901', message: 'Бот для записи клиентов', stage: 'QUALIFIED', source: 'TELEGRAM' },
+      { name: 'Сергей Лебедев', email: 'sergey@logistics.ru', message: 'Интеграция с 1С через API', stage: 'QUALIFIED', source: 'EMAIL' },
+      { name: 'Екатерина Попова', email: 'kate@retail.ru', phone: '+7 950 678 9012', message: 'Автоматизация отчётности', stage: 'PROPOSAL', source: 'WEBSITE' },
+      { name: 'Андрей Захаров', email: 'andrey@clinic.ru', phone: '+7 960 789 0123', message: 'Запись пациентов через Telegram', stage: 'PROPOSAL', source: 'REFERRAL' },
+      { name: 'Наталья Медведева', email: 'natasha@agency.ru', message: 'Лидогенерация через AI', stage: 'WON', source: 'WEBSITE' },
+      { name: 'Роман Федоров', email: 'roman@store.ru', phone: '+7 970 890 1234', message: 'Обработка заказов автоматически', stage: 'WON', source: 'TELEGRAM' },
+      { name: 'Людмила Орлова', email: 'lyuda@edu.ru', message: 'Автоматизация приёма студентов', stage: 'LOST', source: 'EMAIL' },
+    ]
+  })
+  console.log('Created 12 CRM demo leads')
 }
 
 main()
