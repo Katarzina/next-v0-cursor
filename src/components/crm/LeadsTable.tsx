@@ -2,17 +2,22 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Lead } from './KanbanCard'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { useLocale } from '@/contexts/LocaleContext'
 
-const STAGE_COLORS: Record<string, string> = {
-  NEW: 'bg-blue-50 text-blue-700',
-  CONTACTED: 'bg-yellow-50 text-yellow-700',
-  QUALIFIED: 'bg-orange-50 text-orange-700',
-  PROPOSAL: 'bg-purple-50 text-purple-700',
-  WON: 'bg-green-50 text-green-700',
-  LOST: 'bg-gray-100 text-gray-500',
+const STAGE_BADGE: Record<string, string> = {
+  NEW: 'bg-blue-50 text-blue-700 border-blue-200',
+  CONTACTED: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  QUALIFIED: 'bg-orange-50 text-orange-700 border-orange-200',
+  PROPOSAL: 'bg-purple-50 text-purple-700 border-purple-200',
+  WON: 'bg-green-50 text-green-700 border-green-200',
+  LOST: 'bg-gray-100 text-gray-500 border-gray-200',
 }
 
 type SortField = 'createdAt' | 'name' | 'stage'
@@ -35,12 +40,7 @@ export function LeadsTable() {
 
   const fetchLeads = useCallback(() => {
     setLoading(true)
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-      sort,
-      order,
-    })
+    const params = new URLSearchParams({ page: String(page), limit: String(limit), sort, order })
     if (stageFilter !== 'ALL') params.set('stage', stageFilter)
     if (sourceFilter !== 'ALL') params.set('source', sourceFilter)
     if (search) params.set('search', search)
@@ -57,10 +57,9 @@ export function LeadsTable() {
 
   useEffect(() => { fetchLeads() }, [fetchLeads])
 
-  // Debounce search
   useEffect(() => {
-    const t = setTimeout(() => { setSearch(searchInput); setPage(1) }, 300)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => { setSearch(searchInput); setPage(1) }, 300)
+    return () => clearTimeout(timer)
   }, [searchInput])
 
   const updateStage = async (id: string, stage: string) => {
@@ -90,17 +89,25 @@ export function LeadsTable() {
   }
 
   return (
-    <div className="space-y-4">
+    <Card>
+      <CardHeader>
+        <CardTitle>{c.tabs.table}</CardTitle>
+        <CardDescription>{loading ? c.table.loading : `${total} ${c.table.leads}`}</CardDescription>
+      </CardHeader>
+      <CardContent>
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-2">
-        <Input
-          placeholder={c.filters.search}
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="sm:max-w-xs"
-        />
+      <div className="flex items-center gap-4 mb-6 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={c.filters.search}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="pl-8"
+          />
+        </div>
         <Select value={stageFilter} onValueChange={(v) => { setStageFilter(v); setPage(1) }}>
-          <SelectTrigger className="sm:w-44">
+          <SelectTrigger className="w-44">
             <SelectValue placeholder={c.filters.allStages} />
           </SelectTrigger>
           <SelectContent>
@@ -111,7 +118,7 @@ export function LeadsTable() {
           </SelectContent>
         </Select>
         <Select value={sourceFilter} onValueChange={(v) => { setSourceFilter(v); setPage(1) }}>
-          <SelectTrigger className="sm:w-40">
+          <SelectTrigger className="w-40">
             <SelectValue placeholder={c.filters.allSources} />
           </SelectTrigger>
           <SelectContent>
@@ -121,56 +128,64 @@ export function LeadsTable() {
             ))}
           </SelectContent>
         </Select>
-        <div className="sm:ml-auto text-sm text-gray-500 flex items-center">
-          {loading ? c.table.loading : `${total} ${c.table.leads}`}
-        </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-md border overflow-x-auto">
-        <table className="w-full text-sm min-w-[640px]">
-          <thead className="border-b bg-gray-50">
-            <tr>
-              <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer hover:text-gray-900 select-none" onClick={() => toggleSort('name')}>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort('name')}>
                 {c.table.name} <SortIcon field="name" />
-              </th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">{c.table.email}</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">{c.table.phone}</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">{c.table.source}</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer hover:text-gray-900 select-none" onClick={() => toggleSort('stage')}>
+              </TableHead>
+              <TableHead>{c.table.email}</TableHead>
+              <TableHead className="hidden md:table-cell">{c.table.phone}</TableHead>
+              <TableHead className="hidden sm:table-cell">{c.table.source}</TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort('stage')}>
                 {c.table.stage} <SortIcon field="stage" />
-              </th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer hover:text-gray-900 select-none" onClick={() => toggleSort('createdAt')}>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none hidden sm:table-cell" onClick={() => toggleSort('createdAt')}>
                 {c.table.date} <SortIcon field="createdAt" />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i} className="border-b">
-                  {Array.from({ length: 6 }).map((_, j) => (
-                    <td key={j} className="px-4 py-3">
-                      <div className="h-4 bg-gray-100 rounded animate-pulse" style={{ width: j === 0 ? '120px' : j === 1 ? '160px' : '80px' }} />
-                    </td>
-                  ))}
-                </tr>
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-28 rounded-md" /></TableCell>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-20" /></TableCell>
+                </TableRow>
               ))
             ) : leads.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-400">{c.table.noLeads}</td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  {c.table.noLeads}
+                </TableCell>
+              </TableRow>
             ) : leads.map((lead) => (
-              <tr key={lead.id} className="border-b last:border-0 hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 font-medium">{lead.name}</td>
-                <td className="px-4 py-3 text-gray-600">
-                  <a href={`mailto:${lead.email}`} className="hover:underline">{lead.email}</a>
-                </td>
-                <td className="px-4 py-3 text-gray-600">{lead.phone ?? '—'}</td>
-                <td className="px-4 py-3 text-gray-500 text-xs">{c.sources[lead.source as keyof typeof c.sources] ?? lead.source}</td>
-                <td className="px-4 py-3">
+              <TableRow key={lead.id}>
+                <TableCell className="font-medium">{lead.name}</TableCell>
+                <TableCell>
+                  <a href={`mailto:${lead.email}`} className="text-muted-foreground hover:text-foreground hover:underline">
+                    {lead.email}
+                  </a>
+                </TableCell>
+                <TableCell className="text-muted-foreground hidden md:table-cell">
+                  {lead.phone ?? '—'}
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge variant="outline" className="text-xs font-normal">
+                    {c.sources[lead.source as keyof typeof c.sources] ?? lead.source}
+                  </Badge>
+                </TableCell>
+                <TableCell>
                   <Select value={lead.stage} onValueChange={(v) => updateStage(lead.id, v)}>
-                    <SelectTrigger className={`h-7 text-xs w-36 border-0 ${STAGE_COLORS[lead.stage]}`}>
+                    <SelectTrigger className={`h-7 text-xs w-36 ${STAGE_BADGE[lead.stage]}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -179,51 +194,40 @@ export function LeadsTable() {
                       ))}
                     </SelectContent>
                   </Select>
-                </td>
-                <td className="px-4 py-3 text-gray-500 text-xs">
+                </TableCell>
+                <TableCell className="text-muted-foreground text-xs hidden sm:table-cell">
                   {new Date(lead.createdAt).toLocaleDateString('ru-RU')}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination */}
       {pages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+        <div className="flex items-center justify-between mt-4">
+          <p className="text-sm text-muted-foreground">
             {c.table.page} {page} {c.table.of} {pages}
           </p>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage(1)}
-              disabled={page === 1}
-              className="p-1.5 rounded border disabled:opacity-30 hover:bg-gray-50 text-xs px-2"
-            >1</button>
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="p-1.5 rounded border disabled:opacity-30 hover:bg-gray-50"
-            >
+            <Button variant="outline" size="sm" onClick={() => setPage(1)} disabled={page === 1} className="px-2 text-xs">
+              1
+            </Button>
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="px-3 py-1.5 text-sm font-medium bg-gray-900 text-white rounded">{page}</span>
-            <button
-              onClick={() => setPage((p) => Math.min(pages, p + 1))}
-              disabled={page === pages}
-              className="p-1.5 rounded border disabled:opacity-30 hover:bg-gray-50"
-            >
+            </Button>
+            <Button size="sm" className="px-3">{page}</Button>
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setPage((p) => Math.min(pages, p + 1))} disabled={page === pages}>
               <ChevronRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setPage(pages)}
-              disabled={page === pages}
-              className="p-1.5 rounded border disabled:opacity-30 hover:bg-gray-50 text-xs px-2"
-            >{pages}</button>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setPage(pages)} disabled={page === pages} className="px-2 text-xs">
+              {pages}
+            </Button>
           </div>
         </div>
       )}
-    </div>
+      </CardContent>
+    </Card>
   )
 }

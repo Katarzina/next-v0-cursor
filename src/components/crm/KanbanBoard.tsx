@@ -1,5 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import { KanbanCard, Lead } from './KanbanCard'
 import { useLocale } from '@/contexts/LocaleContext'
 
@@ -12,8 +15,16 @@ const STAGE_COLORS: Record<string, string> = {
   LOST: 'bg-gray-50 border-gray-200',
 }
 
-const STAGE_KEYS = ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'WON', 'LOST']
+const STAGE_BADGE_COLORS: Record<string, string> = {
+  NEW: 'bg-blue-100 text-blue-700 border-blue-200',
+  CONTACTED: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  QUALIFIED: 'bg-orange-100 text-orange-700 border-orange-200',
+  PROPOSAL: 'bg-purple-100 text-purple-700 border-purple-200',
+  WON: 'bg-green-100 text-green-700 border-green-200',
+  LOST: 'bg-gray-100 text-gray-500 border-gray-200',
+}
 
+const STAGE_KEYS = ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'WON', 'LOST']
 const CARDS_PER_COL = 8
 
 export function KanbanBoard() {
@@ -23,6 +34,7 @@ export function KanbanBoard() {
     key,
     label: c.stages[key as keyof typeof c.stages],
     color: STAGE_COLORS[key],
+    badgeColor: STAGE_BADGE_COLORS[key],
   }))
 
   const [leads, setLeads] = useState<Lead[]>([])
@@ -55,13 +67,12 @@ export function KanbanBoard() {
       <div className="flex gap-3 overflow-x-auto pb-4">
         {STAGES.map((s) => (
           <div key={s.key} className={`min-w-[210px] w-[210px] flex-shrink-0 rounded-lg border p-3 ${s.color} hidden lg:block`}>
-            <div className="h-4 w-24 bg-white/60 rounded animate-pulse mb-3" />
+            <Skeleton className="h-4 w-24 mb-3" />
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 bg-white/60 rounded-lg mb-2 animate-pulse" />
+              <Skeleton key={i} className="h-20 w-full mb-2" />
             ))}
           </div>
         ))}
-        <div className="text-sm text-gray-500 py-12 text-center lg:hidden w-full">Загрузка...</div>
       </div>
     )
   }
@@ -74,17 +85,15 @@ export function KanbanBoard() {
           {STAGES.map((stage) => {
             const count = leads.filter((l) => l.stage === stage.key).length
             return (
-              <button
+              <Button
                 key={stage.key}
+                variant={activeStage === stage.key ? 'default' : 'outline'}
+                size="sm"
+                className="flex-shrink-0 rounded-full text-xs h-7"
                 onClick={() => { setActiveStage(stage.key); setMobileExpanded(false) }}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                  activeStage === stage.key
-                    ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white text-gray-600 border-gray-200'
-                }`}
               >
                 {stage.label} · {count}
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -97,15 +106,17 @@ export function KanbanBoard() {
                 <KanbanCard key={lead.id} lead={lead} onStageChange={updateStage} />
               ))}
               {stageLeads.length === 0 && (
-                <div className="text-sm text-gray-400 text-center py-8 bg-white rounded-lg border">{c.kanban.empty}</div>
+                <p className="text-sm text-muted-foreground text-center py-8 bg-white rounded-lg border">{c.kanban.empty}</p>
               )}
               {stageLeads.length > CARDS_PER_COL && !mobileExpanded && (
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
                   onClick={() => setMobileExpanded(true)}
-                  className="w-full text-sm text-gray-500 hover:text-gray-900 py-2 border rounded-lg bg-white hover:bg-gray-50 transition-colors"
                 >
                   {c.kanban.showMore.replace('{n}', String(stageLeads.length - CARDS_PER_COL))}
-                </button>
+                </Button>
               )}
             </div>
           )
@@ -127,32 +138,36 @@ export function KanbanBoard() {
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-medium text-sm">{stage.label}</h3>
-                <span className="text-xs bg-white border rounded-full px-2 py-0.5 font-medium">
+                <Badge className={`text-xs px-1.5 py-0 ${stage.badgeColor}`} variant="outline">
                   {stageLeads.length}
-                </span>
+                </Badge>
               </div>
               <div className="space-y-2">
                 {visible.map((lead) => (
                   <KanbanCard key={lead.id} lead={lead} onStageChange={updateStage} />
                 ))}
                 {stageLeads.length === 0 && (
-                  <div className="text-xs text-gray-400 text-center py-4">{c.kanban.empty}</div>
+                  <p className="text-xs text-muted-foreground text-center py-4">{c.kanban.empty}</p>
                 )}
                 {!isExpanded && hidden > 0 && (
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full h-7 text-xs bg-white/70 hover:bg-white"
                     onClick={() => setExpanded((e) => ({ ...e, [stage.key]: true }))}
-                    className="w-full text-xs text-gray-500 hover:text-gray-900 py-1.5 border rounded-md bg-white/70 hover:bg-white transition-colors"
                   >
                     {c.kanban.showMore.replace('{n}', String(hidden))}
-                  </button>
+                  </Button>
                 )}
                 {isExpanded && stageLeads.length > CARDS_PER_COL && (
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full h-7 text-xs bg-white/70 hover:bg-white"
                     onClick={() => setExpanded((e) => ({ ...e, [stage.key]: false }))}
-                    className="w-full text-xs text-gray-500 hover:text-gray-900 py-1.5 border rounded-md bg-white/70 hover:bg-white transition-colors"
                   >
                     {c.kanban.collapse}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>

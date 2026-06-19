@@ -1,5 +1,8 @@
 'use client'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useLocale } from '@/contexts/LocaleContext'
 
 export type Lead = {
   id: string
@@ -13,23 +16,14 @@ export type Lead = {
   updatedAt: string
 }
 
-const STAGE_OPTIONS = [
-  { value: 'NEW', label: 'Новый' },
-  { value: 'CONTACTED', label: 'Связались' },
-  { value: 'QUALIFIED', label: 'Квалифицирован' },
-  { value: 'PROPOSAL', label: 'КП отправлено' },
-  { value: 'WON', label: 'Выиграли' },
-  { value: 'LOST', label: 'Проиграли' },
-]
-
-const SOURCE_LABELS: Record<string, string> = {
-  WEBSITE: 'Сайт',
-  TELEGRAM: 'Telegram',
-  EMAIL: 'Email',
-  FACEBOOK: 'Facebook',
-  YOUTUBE: 'YouTube',
-  REFERRAL: 'Реферал',
-  OTHER: 'Другое',
+const SOURCE_ICONS: Record<string, string> = {
+  WEBSITE: '🌐',
+  TELEGRAM: '✈️',
+  EMAIL: '✉️',
+  FACEBOOK: '👤',
+  YOUTUBE: '▶️',
+  REFERRAL: '🤝',
+  OTHER: '•',
 }
 
 type Props = {
@@ -38,30 +32,36 @@ type Props = {
 }
 
 export function KanbanCard({ lead, onStageChange }: Props) {
+  const { t } = useLocale()
+  const c = t.crm
+
   return (
-    <div className="bg-white border rounded-lg p-3 shadow-sm space-y-1">
-      <div className="font-medium text-sm">{lead.name}</div>
-      <div className="text-xs text-gray-500">{lead.email}</div>
-      {lead.phone && <div className="text-xs text-gray-500">{lead.phone}</div>}
-      <p className="text-xs text-gray-400 line-clamp-2">{lead.message}</p>
-      <div className="flex items-center justify-between pt-1">
-        <span className="text-xs text-gray-400">{SOURCE_LABELS[lead.source] ?? lead.source}</span>
-        <span className="text-xs text-gray-400">
-          {new Date(lead.createdAt).toLocaleDateString('ru-RU')}
-        </span>
-      </div>
-      <Select value={lead.stage} onValueChange={(v) => onStageChange(lead.id, v)}>
-        <SelectTrigger className="h-7 text-xs mt-1">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {STAGE_OPTIONS.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value} className="text-xs">
-              {opt.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+    <Card className="shadow-sm">
+      <CardContent className="p-3 space-y-1.5">
+        <div className="font-medium text-sm leading-tight">{lead.name}</div>
+        <div className="text-xs text-muted-foreground">{lead.email}</div>
+        {lead.phone && <div className="text-xs text-muted-foreground">{lead.phone}</div>}
+        <p className="text-xs text-muted-foreground line-clamp-2">{lead.message}</p>
+        <div className="flex items-center justify-between pt-0.5">
+          <Badge variant="secondary" className="text-xs gap-1 px-1.5">
+            <span>{SOURCE_ICONS[lead.source] ?? '•'}</span>
+            {c.sources[lead.source as keyof typeof c.sources] ?? lead.source}
+          </Badge>
+          <span className="text-xs text-muted-foreground">
+            {new Date(lead.createdAt).toLocaleDateString('ru-RU')}
+          </span>
+        </div>
+        <Select value={lead.stage} onValueChange={(v) => onStageChange(lead.id, v)}>
+          <SelectTrigger className="h-7 text-xs mt-1">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(c.stages).map(([value, label]) => (
+              <SelectItem key={value} value={value} className="text-xs">{label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </CardContent>
+    </Card>
   )
 }
