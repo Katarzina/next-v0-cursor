@@ -328,6 +328,68 @@ export const uk = {
     contactSuccess: 'Ваше повідомлення надіслано! Агент зв\'яжеться з вами найближчим часом.'
   },
   
+  // CRM
+  crm: {
+    title: 'CRM',
+    subtitle: 'Управління лідами та воронкою продажів',
+    tabs: {
+      kanban: 'Воронка',
+      analytics: 'Аналітика',
+      table: 'Всі ліди',
+    },
+    stages: {
+      NEW: 'Новий',
+      CONTACTED: 'Зв\'язались',
+      QUALIFIED: 'Кваліфікований',
+      PROPOSAL: 'КП',
+      WON: 'Виграли',
+      LOST: 'Програли',
+    },
+    sources: {
+      WEBSITE: 'Сайт',
+      TELEGRAM: 'Telegram',
+      EMAIL: 'Email',
+      FACEBOOK: 'Facebook',
+      YOUTUBE: 'YouTube',
+      REFERRAL: 'Реферал',
+      OTHER: 'Інше',
+    },
+    table: {
+      name: 'Ім\'я',
+      email: 'Email',
+      phone: 'Телефон',
+      source: 'Джерело',
+      stage: 'Стадія',
+      date: 'Дата',
+      noLeads: 'Лідів не знайдено',
+      loading: 'Завантаження...',
+      leads: 'лідів',
+      page: 'Сторінка',
+      of: 'з',
+    },
+    filters: {
+      search: 'Пошук за іменем або email...',
+      allStages: 'Всі стадії',
+      allSources: 'Всі джерела',
+    },
+    kanban: {
+      showMore: 'Ще {n}',
+      collapse: 'Згорнути',
+      empty: 'Немає лідів',
+    },
+    analytics: {
+      total: 'Всього лідів',
+      conversion: 'Конверсія',
+      newLast30: 'Нових (30 днів)',
+      avgCycle: 'Середній цикл угоди',
+      days: 'днів',
+      funnel: 'Воронка продажів',
+      weekly: 'Динаміка по тижнях',
+      sources: 'Джерела лідів',
+      newLeads: 'Нові ліди',
+    },
+  },
+
   // Blog
   blog: {
     heroTitle: 'Аналітика та новини нерухомості',

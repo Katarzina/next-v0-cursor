@@ -328,6 +328,68 @@ export const en = {
     contactSuccess: 'Your message has been sent! The agent will contact you soon.'
   },
   
+  // CRM
+  crm: {
+    title: 'CRM',
+    subtitle: 'Lead management and sales funnel',
+    tabs: {
+      kanban: 'Funnel',
+      analytics: 'Analytics',
+      table: 'All Leads',
+    },
+    stages: {
+      NEW: 'New',
+      CONTACTED: 'Contacted',
+      QUALIFIED: 'Qualified',
+      PROPOSAL: 'Proposal',
+      WON: 'Won',
+      LOST: 'Lost',
+    },
+    sources: {
+      WEBSITE: 'Website',
+      TELEGRAM: 'Telegram',
+      EMAIL: 'Email',
+      FACEBOOK: 'Facebook',
+      YOUTUBE: 'YouTube',
+      REFERRAL: 'Referral',
+      OTHER: 'Other',
+    },
+    table: {
+      name: 'Name',
+      email: 'Email',
+      phone: 'Phone',
+      source: 'Source',
+      stage: 'Stage',
+      date: 'Date',
+      noLeads: 'No leads found',
+      loading: 'Loading...',
+      leads: 'leads',
+      page: 'Page',
+      of: 'of',
+    },
+    filters: {
+      search: 'Search by name or email...',
+      allStages: 'All stages',
+      allSources: 'All sources',
+    },
+    kanban: {
+      showMore: 'Show {n} more',
+      collapse: 'Collapse',
+      empty: 'No leads',
+    },
+    analytics: {
+      total: 'Total Leads',
+      conversion: 'Conversion',
+      newLast30: 'New (30 days)',
+      avgCycle: 'Avg. Deal Cycle',
+      days: 'days',
+      funnel: 'Sales Funnel',
+      weekly: 'Weekly Dynamics',
+      sources: 'Lead Sources',
+      newLeads: 'New Leads',
+    },
+  },
+
   // Blog
   blog: {
     heroTitle: 'Real Estate Insights & News',

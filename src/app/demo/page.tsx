@@ -1,38 +1,16 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { signIn } from 'next-auth/react'
 
 export default function DemoPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const [error, setError] = useState(false)
-
   useEffect(() => {
-    if (status === 'authenticated') {
-      router.replace('/crm')
-      return
-    }
-    if (status === 'unauthenticated') {
-      signIn('credentials', {
-        email: 'demo@automation-studio.com',
-        password: 'Demo2024!',
-        callbackUrl: '/crm',
-        redirect: true,
-      }).catch(() => setError(true))
-    }
-  }, [status, router])
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-center p-4">
-        <div>
-          <p className="text-red-500 font-medium">Не удалось войти в демо-аккаунт.</p>
-          <p className="text-sm text-gray-500 mt-1">Обратитесь к администратору.</p>
-        </div>
-      </div>
-    )
-  }
+    signIn('credentials', {
+      email: process.env.NEXT_PUBLIC_DEMO_EMAIL ?? 'demo@automation-studio.com',
+      password: process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? 'Demo2024!',
+      callbackUrl: '/crm',
+      redirect: true,
+    })
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center">

@@ -328,6 +328,68 @@ export const cs = {
     contactSuccess: 'Vaše zpráva byla odeslána! Agent vás brzy kontaktuje.'
   },
   
+  // CRM
+  crm: {
+    title: 'CRM',
+    subtitle: 'Správa potenciálních zákazníků a prodejního trychtýře',
+    tabs: {
+      kanban: 'Trychtýř',
+      analytics: 'Analytika',
+      table: 'Všechny leady',
+    },
+    stages: {
+      NEW: 'Nový',
+      CONTACTED: 'Kontaktován',
+      QUALIFIED: 'Kvalifikován',
+      PROPOSAL: 'Nabídka',
+      WON: 'Vyhráno',
+      LOST: 'Prohráno',
+    },
+    sources: {
+      WEBSITE: 'Web',
+      TELEGRAM: 'Telegram',
+      EMAIL: 'Email',
+      FACEBOOK: 'Facebook',
+      YOUTUBE: 'YouTube',
+      REFERRAL: 'Doporučení',
+      OTHER: 'Jiné',
+    },
+    table: {
+      name: 'Jméno',
+      email: 'Email',
+      phone: 'Telefon',
+      source: 'Zdroj',
+      stage: 'Fáze',
+      date: 'Datum',
+      noLeads: 'Žádné leady nenalezeny',
+      loading: 'Načítání...',
+      leads: 'leadů',
+      page: 'Stránka',
+      of: 'z',
+    },
+    filters: {
+      search: 'Hledat podle jména nebo emailu...',
+      allStages: 'Všechny fáze',
+      allSources: 'Všechny zdroje',
+    },
+    kanban: {
+      showMore: 'Dalších {n}',
+      collapse: 'Sbalit',
+      empty: 'Žádné leady',
+    },
+    analytics: {
+      total: 'Celkem leadů',
+      conversion: 'Konverze',
+      newLast30: 'Nové (30 dní)',
+      avgCycle: 'Průměrný cyklus',
+      days: 'dní',
+      funnel: 'Prodejní trychtýř',
+      weekly: 'Týdenní dynamika',
+      sources: 'Zdroje leadů',
+      newLeads: 'Nové leady',
+    },
+  },
+
   // Blog
   blog: {
     heroTitle: 'Novinky a analýzy realitního trhu',

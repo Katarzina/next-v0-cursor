@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useLocale } from '@/contexts/LocaleContext'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend,
@@ -39,6 +40,8 @@ function MetricCard({ label, value, sub }: { label: string; value: string | numb
 }
 
 export function Analytics() {
+  const { t } = useLocale()
+  const c = t.crm
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -52,7 +55,7 @@ export function Analytics() {
   }, [])
 
   if (loading) {
-    return <div className="text-sm text-gray-500 py-12 text-center">Загрузка...</div>
+    return <div className="text-sm text-gray-500 py-12 text-center">{c.table.loading}</div>
   }
 
   if (!stats) return null
@@ -61,22 +64,22 @@ export function Analytics() {
     <div className="space-y-6">
       {/* Metric cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricCard label="Всего лидов" value={stats.total} />
-        <MetricCard label="Конверсия" value={`${stats.conversion}%`} sub={`${stats.won} выиграно`} />
-        <MetricCard label="Новых за 30 дней" value={stats.newLast30} />
-        <MetricCard label="Средний цикл" value={`${stats.avgCycle} дн.`} sub="для выигранных" />
+        <MetricCard label={c.analytics.total} value={stats.total} />
+        <MetricCard label={c.analytics.conversion} value={`${stats.conversion}%`} sub={`${stats.won} ${c.stages.WON.toLowerCase()}`} />
+        <MetricCard label={c.analytics.newLast30} value={stats.newLast30} />
+        <MetricCard label={c.analytics.avgCycle} value={`${stats.avgCycle} ${c.analytics.days}`} />
       </div>
 
       {/* Funnel + Sources */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 bg-white rounded-lg border p-4">
-          <h3 className="text-sm font-medium mb-4">Воронка по стадиям</h3>
+          <h3 className="text-sm font-medium mb-4">{c.analytics.funnel}</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={stats.funnel} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <XAxis dataKey="stage" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
               <Tooltip />
-              <Bar dataKey="count" name="Лидов" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="count" name={c.table.leads} radius={[4, 4, 0, 0]}>
                 {stats.funnel.map((entry) => (
                   <Cell key={entry.key} fill={FUNNEL_COLORS[entry.key] ?? '#9ca3af'} />
                 ))}
@@ -86,7 +89,7 @@ export function Analytics() {
         </div>
 
         <div className="bg-white rounded-lg border p-4">
-          <h3 className="text-sm font-medium mb-4">Источники</h3>
+          <h3 className="text-sm font-medium mb-4">{c.analytics.sources}</h3>
           {stats.sources.length > 0 ? (
             <>
               <ResponsiveContainer width="100%" height={160}>
@@ -126,7 +129,7 @@ export function Analytics() {
 
       {/* Weekly dynamics */}
       <div className="bg-white rounded-lg border p-4">
-        <h3 className="text-sm font-medium mb-4">Новые лиды по неделям</h3>
+        <h3 className="text-sm font-medium mb-4">{c.analytics.weekly}</h3>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={stats.weeks} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -136,7 +139,7 @@ export function Analytics() {
             <Line
               type="monotone"
               dataKey="count"
-              name="Лидов"
+              name={c.analytics.newLeads}
               stroke="#3b82f6"
               strokeWidth={2}
               dot={{ r: 3 }}

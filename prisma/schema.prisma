@@ -69,6 +69,7 @@ enum UserRole {
   USER
   AGENT
   ADMIN
+  DEMO
 }
 
 enum LeadStage {
