@@ -20,14 +20,15 @@ async function getBlogPost(slug: string) {
   }
 }
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({
-    select: { slug: true }
-  });
-  
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  try {
+    const posts = await prisma.blogPost.findMany({ select: { slug: true } })
+    return posts.map((post) => ({ slug: post.slug }))
+  } catch {
+    return []
+  }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
